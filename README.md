@@ -4,6 +4,8 @@
 
 Information Retrieval (aka web scraping) is the process of collecting information from a network resource. This document is a (WIP) introduction to differenct aspects and techniques involved in an information retrival system.
 
+Most of this text will be language-agnostic, but code snippets will probably break that rule.
+
 ## The Process
 You can crudely break down any IR process into 3 steps:
 
