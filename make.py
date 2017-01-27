@@ -24,6 +24,9 @@ def main():
     build = re.sub(Config.pattern, import_resource, raw)
     open(Config.dest, 'w').write(build)
 
+    # required for git pre-commit hook
+    print(Config.dest)
+
 
 if __name__ == '__main__':
     main()
