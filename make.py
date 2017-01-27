@@ -15,7 +15,7 @@ def import_resource(match):
 
     path = match.groups()[0]
 
-    return open(path).read()
+    return 'file: ' + path + '\n-----\n' + open(path).read()
 
 def main():
     raw = open(Config.src).read()
