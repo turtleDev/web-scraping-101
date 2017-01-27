@@ -15,10 +15,7 @@ def import_resource(match):
 
     path = match.groups()[0]
 
-    if os.path.isfile(path):
-        return open(path).read()
-    else:
-        return ''
+    return open(path).read()
 
 def main():
     raw = open(Config.src).read()
