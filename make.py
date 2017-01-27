@@ -6,10 +6,17 @@ import os
 class Config:
     src = 'src/IR101.md'
     dest = 'IR101.md'
+    pattern = '{{import\((.+)\)}}'
 
-def import_resource(path):
+def import_resource(match):
+
+    if not match:
+        return ''
+
+    path = match.groups()[0]
+
     if os.path.isfile(path):
-        return '\n' + open(path).read() + '\n'
+        return open(path).read()
     else:
         return ''
 
