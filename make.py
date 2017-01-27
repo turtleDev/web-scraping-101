@@ -16,7 +16,7 @@ def import_resource(match):
     path = match.groups()[0]
 
     return ('# file: ' + path + '\n' + 
-            '#' +  ('-' * 10) + '\n' +
+            '# ' +  ('-' * (6 + len(path))) + '\n\n' +
             open(path).read())
 
 def main():
