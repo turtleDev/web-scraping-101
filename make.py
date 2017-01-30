@@ -4,8 +4,8 @@ import re
 import os
 
 class Config:
-    src = 'src/IR101.md'
-    dest = 'IR101.md'
+    src = 'src/WS101.md'
+    dest = 'WS101.md'
     pattern = '{{import\((.+)\)}}'
 
 def import_resource(match):
