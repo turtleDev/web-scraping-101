@@ -23,12 +23,13 @@ class Crawler:
 
 
     def _invoke_spider(self, payload):
-        value = self._spider.parse(payload, self)
-        if isinstance(value, types.GeneratorType):
-            for chunk in value:
+        # tbd = to be determined
+        tbd = self._spider.parse(payload, self)
+        if isinstance(tbd, types.GeneratorType):
+            for chunk in tbd:
                 self._pipe(chunk)
         else:
-            self._pipe(payload)
+            self._pipe(tbd)
 
 
     def _pipe(self, payload):
