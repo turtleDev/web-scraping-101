@@ -6,5 +6,7 @@ Web Scraping (aka web mining) is the process of collecting information from a ne
 
 Most of this text will be language-agnostic, but code snippets will probably break that rule.
 
+Begin [here](https://github.com/turtleDev/web-scraping-101/blob/master/WS101.md)
+
 # License
 MIT
