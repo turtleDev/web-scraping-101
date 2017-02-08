@@ -14,4 +14,4 @@ test_xp: test_xp.c
 	$(CC) $(LXML_CFLAGS) -o test_xp test_xp.c $(LXML_LIBS)
 
 clean:
-	rm -f test_fetch text_xp
+	rm -f test_fetch test_xp
