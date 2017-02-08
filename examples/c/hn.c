@@ -11,7 +11,9 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+
 #include <glib.h>
+#include <libxml/tree.h>
 
 #include "fetch.h"
 #include "xp.h"
@@ -28,20 +30,69 @@ bool cleanup()
     return fetch_cleanup() && xp_cleanup();
 }
 
+char *scrape(char *body)
+{
+    struct xp_object *doc = xp_doc_new(body);
+    struct xp_list *titles = xp_exec(doc, "//a[@class='storylink']");
+    int i;
+    for ( i = 0; i < titles->len; ++i ) {
+        xmlNodePtr car;
+        car = titles->nodes[i]->children;
+        while(car) {
+            if ( car->type == XML_TEXT_NODE ) {
+                printf("%s\n", car->content);
+            }
+            car = car->next;
+        }
+    }
+
+    return NULL;
+}
+
+
+char *next_url(char* current_url, char *href)
+{
+    char **chunks = g_strsplit(current_url, "?", -1);
+    char *base = strdup(chunks[0]);
+    g_strfreev(chunks);
+    free(current_url);
+    return g_strjoin(NULL, base, "/", href);
+}
+
+bool crawl()
+{
+    char *url = strdup("https://news.ycombinator.com");
+    char *next_href = NULL;
+    char *body = NULL;
+
+    while(url) {
+
+        body = fetch(url);
+        check(body, "error retrieving %s", url);
+
+        next_href = scrape(body);
+        free(body);
+
+        url = next_href?next_url(url, next_href):NULL;
+    }
+
+error:
+    return false;
+}
+
 int main()
 {
     check(init(), "can't init");
 
-    char *url = "http://news.ycombinator.com";
+    char *url = "https://news.ycombinator.com";
 
-    char *body = fetch(url);
-    check(body, "fetch failed");
+    check(crawl(), "there was an error with the crawler");
 
     // don't really care if clean up failed; OS will nuke everything anyway
     cleanup();
     return 0;
 
 error:
-    if (body) free(body);
+    cleanup();
     return -1;
 }
