@@ -13,29 +13,26 @@
 #include <stdbool.h>
 #include <glib.h>
 
+#include "fetch.h"
+#include "xp.h"
 #include "debug.h"
-
-/**
- * global objects.
- */
-
 
 bool init() 
 { 
-    return fetch_init();
+    return fetch_init() && xp_init();
 }
 
 
 bool cleanup() 
 {
-    return fetch_cleanup();
+    return fetch_cleanup() && xp_cleanup();
 }
 
 int main()
 {
     check(init(), "can't init");
 
-    const char *url = "http://news.ycombinator.com";
+    char *url = "http://news.ycombinator.com";
 
     char *body = fetch(url);
     check(body, "fetch failed");
@@ -45,5 +42,6 @@ int main()
     return 0;
 
 error:
+    if (body) free(body);
     return -1;
 }

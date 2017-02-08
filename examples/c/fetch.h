@@ -14,7 +14,7 @@
  */
 static CURL *curl = NULL;
 
-size_t write_callback(char *data, size_t size, size_t nmemb, void *buf)
+static size_t write_callback(char *data, size_t size, size_t nmemb, void *buf)
 {
     GString *str = buf;
     g_string_append_len(str, data, size * nmemb);
