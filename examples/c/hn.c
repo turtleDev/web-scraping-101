@@ -19,6 +19,18 @@
 #include "xp.h"
 #include "debug.h"
 
+int index_at_occurance(char *str, char c, int o)
+{
+    int i;
+    int len = strlen(str);
+    for ( i = 0; i < len; ++i ) {
+        if ( str[i] == c ) { --o; }
+        if ( o == 0 ) { return i; }
+    }
+
+    return -1;
+}
+
 bool init() 
 { 
     return fetch_init() && xp_init();
@@ -46,17 +58,40 @@ char *scrape(char *body)
         }
     }
 
-    return NULL;
+    // find the next hypertext reference, if any.
+    char *next_href = NULL;
+    struct xp_list *href = xp_exec(doc, "//a[@class='morelink']/@href");
+    if ( href->nodes ) {
+
+        xmlNodePtr tmp = href->nodes[0]->children;
+
+        while(tmp) {
+            if ( tmp->type == XML_TEXT_NODE ) {
+                next_href = strdup((const char *)tmp->content);
+            }
+            tmp = tmp->next;
+        }
+    }
+
+
+    xp_doc_free(doc);
+    xp_list_free(titles);
+    xp_list_free(href);
+
+
+    return next_href;
 }
 
 
 char *next_url(char* current_url, char *href)
 {
-    char **chunks = g_strsplit(current_url, "?", -1);
-    char *base = strdup(chunks[0]);
-    g_strfreev(chunks);
+    // find the third occurance of character '/',
+    // basically we want to find the end of the domain name
+    int limit = index_at_occurance(current_url, '/', 3);
+
+    char *base = strndup(current_url, limit);
     free(current_url);
-    return g_strjoin(NULL, base, "/", href);
+    return g_strjoin(NULL, base, "/", href, NULL);
 }
 
 bool crawl()
@@ -76,6 +111,7 @@ bool crawl()
         url = next_href?next_url(url, next_href):NULL;
     }
 
+    return true;
 error:
     return false;
 }
@@ -83,8 +119,6 @@ error:
 int main()
 {
     check(init(), "can't init");
-
-    char *url = "https://news.ycombinator.com";
 
     check(crawl(), "there was an error with the crawler");
 

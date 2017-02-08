@@ -7,7 +7,7 @@ CURL_LIBS=$(shell curl-config --libs)
 GLIB_LIBS=$(shell pkg-config --libs glib-2.0)
 LXML_LIBS=$(shell xml2-config --libs)
 
-CFLAGS=$(CURL_CFLAGS) $(GLIB_CFLAGS) $(LXML_CFLAGS)
+CFLAGS= -g -Wall $(CURL_CFLAGS) $(GLIB_CFLAGS) $(LXML_CFLAGS)
 LIBS=$(CURL_LIBS) $(GLIB_LIBS) $(LXML_LIBS)
 
 hn: hn.c

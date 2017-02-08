@@ -95,7 +95,7 @@ bool xp_cleanup()
 
 struct xp_list *xp_exec(struct xp_object *self, const char *xp_expr) 
 {
-    xmlXPathObjectPtr container = xmlXPathEvalExpression(xp_expr, self->context);
+    xmlXPathObjectPtr container = xmlXPathEvalExpression((xmlChar *)xp_expr, self->context);
     check(container, "error evaulating xpath");
 
     return xp_list_new(container);
