@@ -85,13 +85,16 @@ char *scrape(char *body)
 
 char *next_url(char* current_url, char *href)
 {
-    // find the third occurance of character '/',
-    // basically we want to find the end of the domain name
+    /**
+      * find the third occurance of character '/',
+      * basically we want to find the end of the domain name
+      */
     int limit = index_at_occurance(current_url, '/', 3);
-
     char *base = strndup(current_url, limit);
+    char *url = g_strjoin(NULL, base, "/", href, NULL);
     free(current_url);
-    return g_strjoin(NULL, base, "/", href, NULL);
+    free(base);
+    return url;
 }
 
 bool crawl()
@@ -108,7 +111,14 @@ bool crawl()
         next_href = scrape(body);
         free(body);
 
-        url = next_href?next_url(url, next_href):NULL;
+        if ( next_href ) {
+            url = next_url(url, next_href);
+        } else {
+            free(url);
+            url = NULL;
+        }
+
+        if (next_href) free(next_href);
     }
 
     return true;
