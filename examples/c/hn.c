@@ -4,7 +4,9 @@
  * We're on the dark side now. All nice abstractions are gone.
  * No more safety of a complacent interpreter.
  *
- * Now we battle the ruthless compiler and level up!
+ * Now we battle the ruthless compiler
+ *
+ * To arms! my ... keyboard bashing brethren!
  */
 
 #include <stdio.h>
@@ -14,19 +16,20 @@
 #include "debug.h"
 
 /**
- * make a network request
+ * global objects.
  */
-char *fetch(const char *url)
-{
 
-    check(0, "http error");
-    return NULL;
-error:
-    return NULL;
+
+bool init() 
+{ 
+    return fetch_init();
 }
 
-int init() { return true; }
-int cleanup() { }
+
+bool cleanup() 
+{
+    return fetch_cleanup();
+}
 
 int main()
 {
@@ -37,7 +40,7 @@ int main()
     char *body = fetch(url);
     check(body, "fetch failed");
 
-    // don't really care if clean up failed; OS nuke everything anyway
+    // don't really care if clean up failed; OS will nuke everything anyway
     cleanup();
     return 0;
 
