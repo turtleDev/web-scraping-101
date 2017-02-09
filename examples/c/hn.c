@@ -47,13 +47,14 @@ bool cleanup()
 
 void process(GHashTable *obj)
 {
-    char *keys[] = {"name", "url", "user", "comments", "collected_at"};
-    int key_len = sizeof(keys)/sizeof(keys[0]);
-    int i;
-
     if ( !g_hash_table_lookup(obj, "user") ) {
         g_hash_table_insert(obj, "user", strdup("(N/A)"));
     }
+
+    GHashTableIter iter;
+    g_hash_table_iter_init(&iter, obj);
+    gpointer key;
+    gpointer val;
 
     /**
      * I'm just rendering the hash table in JSON-like format.
@@ -62,8 +63,8 @@ void process(GHashTable *obj)
      * JSON string and then log it to console or write it to a file.
      */
     printf("{\n");
-    for ( i = 0; i < key_len; ++i ) {
-        printf("    \"%s\": \"%s\"\n", keys[i], (char *) g_hash_table_lookup(obj, keys[i]));
+    while(g_hash_table_iter_next(&iter, &key, &val)) {
+        printf("    \"%s\": \"%s\"\n", (char *)key, (char *)val);
     }
     printf("}\n");
 }
