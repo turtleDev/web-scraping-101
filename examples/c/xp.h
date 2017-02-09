@@ -10,6 +10,9 @@
 
 #include "debug.h"
 
+#if !defined(LIBXML_XPATH_ENABLED)
+#error "your version of libxml is not compiled with xpath support"
+#endif
 
 struct xp_object {
     xmlDocPtr document;
