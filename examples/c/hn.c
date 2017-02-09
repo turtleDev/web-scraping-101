@@ -21,7 +21,6 @@
 
 #define START_URL "https://news.ycombinator.com"
 
-/* utils */
 int index_at_occurance(char *str, char c, int o)
 {
     int i;
@@ -51,6 +50,16 @@ void process(GHashTable *obj)
     int key_len = sizeof(keys)/sizeof(keys[0]);
     int i;
 
+    if ( !g_hash_table_lookup(obj, "user") ) {
+        g_hash_table_insert(obj, "user", strdup("(N/A)"));
+    }
+
+    /**
+     * I'm just rendering the hash table in JSON-like format.
+     * even though it's not exactly the same, but you could take
+     * the hashtable object and then serialise it into a real
+     * JSON string and then log it to console or write it to a file.
+     */
     printf("{\n");
     for ( i = 0; i < key_len; ++i ) {
         printf("\t\"%s\": \"%s\"\n", keys[i], (char *) g_hash_table_lookup(obj, keys[i]));
