@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+#include <time.h>
 
 #include <glib.h>
 #include <libxml/tree.h>
@@ -46,7 +47,7 @@ bool cleanup()
 
 void process(GHashTable *obj)
 {
-    char *keys[] = {"name", "url", "user", "comments"};
+    char *keys[] = {"name", "url", "user", "comments", "collected_at"};
     int key_len = sizeof(keys)/sizeof(keys[0]);
     int i;
 
@@ -62,7 +63,7 @@ void process(GHashTable *obj)
      */
     printf("{\n");
     for ( i = 0; i < key_len; ++i ) {
-        printf("\t\"%s\": \"%s\"\n", keys[i], (char *) g_hash_table_lookup(obj, keys[i]));
+        printf("    \"%s\": \"%s\"\n", keys[i], (char *) g_hash_table_lookup(obj, keys[i]));
     }
     printf("}\n");
 }
@@ -176,6 +177,14 @@ char *scrape(char *body)
             }
             tmp = tmp->next;
         }
+
+        // log the crawl time
+        time_t now;
+        time(&now);
+        char *tstr = strdup(ctime(&now));
+        int len = strlen(tstr);
+        tstr[len-1] = '\0'; // this gets rid of the new line at the end
+        g_hash_table_insert(obj, "collected_at", tstr);
         
 
         process(obj);
