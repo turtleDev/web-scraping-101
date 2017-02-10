@@ -4,6 +4,7 @@
 
 #include "fetch.h"
 #include "debug.h"
+#include "misc.h"
 
 int main()
 {

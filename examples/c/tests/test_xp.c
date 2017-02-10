@@ -25,6 +25,7 @@ int main()
 
     xp_context_free(doc);
     xp_free(result);
+    xp_cleanup();
     return 0;
 }
 
