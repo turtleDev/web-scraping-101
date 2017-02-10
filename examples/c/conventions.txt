@@ -21,7 +21,7 @@ Error Codes FTW
     debug.h) makes error handling somewhat automated and fun.
 
     If you have the patience, you can even modify the debug system to generate
-    fully function stack traces, along with corresponding error messages. Now
+    fully functional stack traces, along with corresponding error messages. Now
     wouldn't that be beautiful?
 
 Use Function Metadata Symbols
@@ -39,4 +39,7 @@ Use Function Metadata Symbols
     there is no reason to mark all input arguments with `in`. However, there
     are certain cases where one argument will be both an input and out, in
     those cases you use `in out` marker to convey that information.
+
+    winapi in particular uses these convention, but they ask you use both `in`
+    and `out` markers. I like my code a little more terse.
 
