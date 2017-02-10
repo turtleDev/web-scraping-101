@@ -1,0 +1,21 @@
+Code Conventions
+================
+
+Object Lifetime Isolation
+    
+    This is just fancy speak for saying that all objects created within a scope
+    should be destroyed in that scope. The only exception to this rule are
+    constructor functions. Use Container objects (dynamic arrays, hashtables)
+    to pass information back to a caller.
+
+    _cue jeena yaha marna yaha_
+
+    This makes memory managment a little bit less painful, because you can look
+    at a scope or block and be sure that any objects created within that block
+    were freed.
+
+Error Codes FTW
+
+    As much as possible and where required, use error codes (preferbly ints) to
+    convey success or any other messages. Using debug macros (check() in
+    debug.h) makes error handling somewhat automated and fun.
