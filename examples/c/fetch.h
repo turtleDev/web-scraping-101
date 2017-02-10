@@ -8,6 +8,7 @@
 #include <curl/curl.h>
 
 #include "debug.h"
+#include "misc.h"
 
 /**
  * global handle
@@ -23,32 +24,30 @@ static size_t write_callback(char *data, size_t size, size_t nmemb, void *buf)
 
 /* exported symbols */
 
-bool fetch_init()
+int fetch_init()
 {
     check(curl_global_init(CURL_GLOBAL_DEFAULT) == CURLE_OK, "could not init curl");
     curl = curl_easy_init();
     check(curl, "unable to create an curl handle");
-    return true; 
+    return HN_OK; 
 error:
-    return false;
+    return HN_ERR;
 }
 
 
-bool fetch_cleanup()
+int fetch_cleanup()
 {
     curl_easy_cleanup(curl);
     curl_global_cleanup();
-    return true;
+    return HN_OK;
 }
 
-char *fetch(const char *url) 
+int fetch(GString *url, GString *body) 
 {
 
     CURLcode status;
-    curl_easy_setopt(curl, CURLOPT_URL, url);
+    curl_easy_setopt(curl, CURLOPT_URL, GSTR(url));
 
-    GString *body = NULL;
-    body = g_string_new(NULL);
     check(body, "unable to create buffer");
 
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, body);
@@ -58,13 +57,10 @@ char *fetch(const char *url)
 
     check(status == CURLE_OK, "failed to performs request: %s", curl_easy_strerror(status));
 
-    gchar *data = g_string_free(body, false);
-
-    return (char *) data;
+    return HN_OK;
 
 error:
-    if (body) g_string_free(body, true);
-    return NULL;
+    return HN_ERR;
 }
 
 #endif

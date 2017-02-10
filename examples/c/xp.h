@@ -9,6 +9,7 @@
 #include <libxml/tree.h>
 
 #include "debug.h"
+#include "misc.h"
 
 #if !defined(LIBXML_XPATH_ENABLED)
 #error "your version of libxml is not compiled with xpath support"
@@ -76,7 +77,7 @@ void xp_doc_free(struct xp_object *object)
     free(object);
 }
 
-bool xp_init()
+int xp_init()
 {
     /**
      * don't worry; I don't understand this test macro either.
@@ -86,14 +87,14 @@ bool xp_init()
     LIBXML_TEST_VERSION
     xmlInitParser();
 
-    return true;
+    return HN_OK;
 }
 
-bool xp_cleanup()
+int xp_cleanup()
 {
 
     xmlCleanupParser();
-    return true;
+    return HN_OK;
 }
 
 struct xp_list *xp_exec(struct xp_object *self, const char *xp_expr) 

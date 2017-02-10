@@ -16,9 +16,10 @@
 #include <glib.h>
 #include <libxml/tree.h>
 
-#include "fetch.h"
 #include "xp.h"
 #include "debug.h"
+#include "fetch.h"
+#include "misc.h"
 
 #define START_URL "https://news.ycombinator.com"
 
@@ -34,11 +35,14 @@ int index_at_occurance(char *str, char c, int o)
     return -1;
 }
 
-bool init() 
+int init() 
 { 
-    return fetch_init() && xp_init();
-}
+    if ( fetch_init() == HN_OK && xp_init() == HN_OK ) 
+        return HN_OK;
+    else
+        return HN_ERR;
 
+}
 
 bool cleanup() 
 {
@@ -75,9 +79,9 @@ gboolean hash_table_clear(gpointer key, gpointer value, gpointer udata)
     return true;
 }
 
-char *scrape(char *body)
+void scrape(GString *body, GString *next_href)
 {
-    struct xp_object *doc = xp_doc_new(body);
+    struct xp_object *doc = xp_doc_new(GSTR(body));
     struct xp_list *storylinks = xp_exec(doc, "//table[@class='itemlist']//td[@class='title']/a[@class='storylink']");
     struct xp_list *subtexts = xp_exec(doc, "//table[@class='itemlist']//td[@class='subtext']");
 
@@ -199,8 +203,6 @@ char *scrape(char *body)
     xp_list_free(storylinks);
     xp_list_free(subtexts);
 
-    // find the next hypertext reference, if any.
-    char *next_href = NULL;
     struct xp_list *href = xp_exec(doc, "//a[@class='morelink']/@href");
     if ( href->nodes ) {
 
@@ -208,7 +210,7 @@ char *scrape(char *body)
 
         while(tmp) {
             if ( tmp->type == XML_TEXT_NODE ) {
-                next_href = strdup((const char *)tmp->content);
+                g_string_append(next_href,(const char *)tmp->content);
             }
             tmp = tmp->next;
         }
@@ -217,59 +219,61 @@ char *scrape(char *body)
 
     xp_list_free(href);
     xp_doc_free(doc);
-
-    return next_href;
 }
 
 
-char *next_url(char* current_url, char *href)
+void next_url(GString *url, GString *href)
 {
     /**
       * find the third occurance of character '/',
       * basically we want to find the end of the domain name
       */
-    int limit = index_at_occurance(current_url, '/', 3);
-    char *base = strndup(current_url, limit);
-    char *url = g_strjoin(NULL, base, "/", href, NULL);
-    free(current_url);
+    int limit = index_at_occurance(GSTR(url), '/', 3);
+    char *base = strndup(GSTR(url), limit);
+    char *next_url = g_strjoin(NULL, base, "/", GSTR(href), NULL);
+    g_string_assign(url, next_url);
     free(base);
-    return url;
+    free(next_url);
 }
 
-bool crawl()
+int crawl(const char *target)
 {
-    char *url = strdup("https://news.ycombinator.com");
-    char *next_href = NULL;
-    char *body = NULL;
+    GString *url = g_string_new(target);
+    GString *next_href = g_string_new(NULL);
+    GString *body = g_string_new(NULL);
 
-    while(url) {
+    while(true) {
 
-        body = fetch(url);
-        check(body, "error retrieving %s", url);
+        check(fetch(url, body) == HN_OK, "fetch() failed");
+        scrape(body, next_href);
+        next_url(url, next_href);
 
-        next_href = scrape(body);
-        free(body);
-
-        if ( next_href ) {
-            url = next_url(url, next_href);
-        } else {
-            free(url);
-            url = NULL;
+        if (!GSTR_LEN(next_href)) {
+            break;
         }
 
-        if (next_href) free(next_href);
+        g_string_set_size(next_href, 0);
+        g_string_set_size(body, 0);
     }
 
-    return true;
+    g_string_free(url, true);
+    g_string_free(next_href, true);
+    g_string_free(body, true);
+
+    return HN_OK;
 error:
-    return false;
+    g_string_free(url, true);
+    g_string_free(next_href, true);
+    g_string_free(body, true);
+
+    return HN_ERR;
 }
 
 int main()
 {
-    check(init(), "can't init");
+    check(init() == HN_OK, "can't init");
 
-    check(crawl(), "there was an error with the crawler");
+    check(crawl(START_URL) == HN_OK, "there was an error with the crawler");
 
     // don't really care if clean up failed; OS will nuke everything anyway
     cleanup();
