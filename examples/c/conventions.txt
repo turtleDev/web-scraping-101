@@ -19,3 +19,24 @@ Error Codes FTW
     As much as possible and where required, use error codes (preferbly ints) to
     convey success or any other messages. Using debug macros (check() in
     debug.h) makes error handling somewhat automated and fun.
+
+    If you have the patience, you can even modify the debug system to generate
+    fully function stack traces, along with corresponding error messages. Now
+    wouldn't that be beautiful?
+
+Use Function Metadata Symbols
+
+    Since we're using return values only for status reporting, it might become
+    a little confusing to know what values are input and what are ouput, enter
+    metadata symbols.
+
+    simply put they are empty #defines that we use to decorate a function
+    declaration.
+
+    for example `out` tells us that this object will be populated with the
+    result of the function call. There is an `in` marker as well, but it does
+    come with a catch. by default, we assume all arguements to be inputs, so
+    there is no reason to mark all input arguments with `in`. However, there
+    are certain cases where one argument will be both an input and out, in
+    those cases you use `in out` marker to convey that information.
+

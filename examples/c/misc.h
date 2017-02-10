@@ -11,4 +11,9 @@
 #define GSTR(S) (S->str)
 #define GSTR_LEN(S) (S->len)
 
+/* function meta data */
+
+#define in
+#define out
+
 #endif
