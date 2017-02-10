@@ -15,12 +15,12 @@
 #error "your version of libxml is not compiled with xpath support"
 #endif
 
-struct xp_object {
+struct xp_context {
     xmlDocPtr document;
     xmlXPathContextPtr context;
 };
 
-struct xp_list {
+struct xp {
     int len;
     xmlNodePtr *nodes;
 
@@ -28,10 +28,10 @@ struct xp_list {
     xmlXPathObject *_container;
 };
 
-struct xp_list *xp_list_new(xmlXPathObjectPtr container) 
+static struct xp *_xp_new(xmlXPathObjectPtr container) 
 {
-    struct xp_list *list;
-    list = malloc(sizeof(struct xp_list));
+    struct xp *list;
+    list = malloc(sizeof(struct xp));
     check(list, "malloc failed");
 
     xmlNodeSetPtr nodeset = container->nodesetval;
@@ -44,15 +44,15 @@ error:
     return NULL;
 }
 
-void xp_list_free(struct xp_list *list) 
+void xp_free(struct xp *obj) 
 {
-    xmlXPathFreeObject(list->_container);
-    free(list);
+    xmlXPathFreeObject(obj->_container);
+    free(obj);
 }
 
-struct xp_object *xp_doc_new(const char *data) 
+struct xp_context *xp_context_new(const char *data) 
 {
-    struct xp_object *obj = malloc(sizeof(struct xp_object));
+    struct xp_context *obj = malloc(sizeof(struct xp_context));
     check(obj, "malloc failed");
 
     obj->document = htmlReadMemory(data, strlen(data), "noname.xml", NULL, 0);
@@ -69,7 +69,7 @@ error:
     return NULL;
 }
 
-void xp_doc_free(struct xp_object *object)
+void xp_context_free(struct xp_context *object)
 {
 
     xmlXPathFreeContext(object->context);
@@ -97,12 +97,12 @@ int xp_cleanup()
     return HN_OK;
 }
 
-struct xp_list *xp_exec(struct xp_object *self, const char *xp_expr) 
+struct xp *xp_exec(struct xp_context *context, const char *xp_expr) 
 {
-    xmlXPathObjectPtr container = xmlXPathEvalExpression((xmlChar *)xp_expr, self->context);
+    xmlXPathObjectPtr container = xmlXPathEvalExpression((xmlChar *)xp_expr, context->context);
     check(container, "error evaulating xpath");
 
-    return xp_list_new(container);
+    return _xp_new(container);
 error:
     return NULL;
 }

@@ -81,9 +81,9 @@ gboolean hash_table_clear(gpointer key, gpointer value, gpointer udata)
 
 void scrape(GString *body, GString OUT *next_href)
 {
-    struct xp_object *doc = xp_doc_new(GSTR(body));
-    struct xp_list *storylinks = xp_exec(doc, "//table[@class='itemlist']//td[@class='title']/a[@class='storylink']");
-    struct xp_list *subtexts = xp_exec(doc, "//table[@class='itemlist']//td[@class='subtext']");
+    struct xp_context *doc = xp_context_new(GSTR(body));
+    struct xp *storylinks = xp_exec(doc, "//table[@class='itemlist']//td[@class='title']/a[@class='storylink']");
+    struct xp *subtexts = xp_exec(doc, "//table[@class='itemlist']//td[@class='subtext']");
 
     int min_length;
     if ( storylinks->len < subtexts->len ) {
@@ -200,10 +200,10 @@ void scrape(GString *body, GString OUT *next_href)
     }
     // free up resources
     g_hash_table_destroy(obj);
-    xp_list_free(storylinks);
-    xp_list_free(subtexts);
+    xp_free(storylinks);
+    xp_free(subtexts);
 
-    struct xp_list *href = xp_exec(doc, "//a[@class='morelink']/@href");
+    struct xp *href = xp_exec(doc, "//a[@class='morelink']/@href");
     if ( href->nodes ) {
 
         xmlNodePtr tmp = href->nodes[0]->children;
@@ -217,8 +217,8 @@ void scrape(GString *body, GString OUT *next_href)
     }
 
 
-    xp_list_free(href);
-    xp_doc_free(doc);
+    xp_free(href);
+    xp_context_free(doc);
 }
 
 
