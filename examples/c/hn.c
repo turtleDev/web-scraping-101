@@ -79,7 +79,7 @@ gboolean hash_table_clear(gpointer key, gpointer value, gpointer udata)
     return true;
 }
 
-void scrape(GString *body, GString *next_href)
+void scrape(GString *body, GString OUT *next_href)
 {
     struct xp_object *doc = xp_doc_new(GSTR(body));
     struct xp_list *storylinks = xp_exec(doc, "//table[@class='itemlist']//td[@class='title']/a[@class='storylink']");
@@ -222,7 +222,7 @@ void scrape(GString *body, GString *next_href)
 }
 
 
-void next_url(GString *url, GString *href)
+void next_url(GString *url, GString IN OUT *href)
 {
     /**
       * find the third occurance of character '/',

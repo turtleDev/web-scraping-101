@@ -42,7 +42,7 @@ int fetch_cleanup()
     return HN_OK;
 }
 
-int fetch(GString *url, GString *body) 
+int fetch(GString *url, GString OUT *body) 
 {
 
     CURLcode status;

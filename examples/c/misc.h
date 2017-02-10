@@ -13,7 +13,7 @@
 
 /* function meta data */
 
-#define in
-#define out
+#define IN
+#define OUT
 
 #endif
