@@ -25,4 +25,4 @@ If you'd like to ask a question, open up an [issue][ref-issue]. I'll try to get 
 # License
 MIT
 
-[ref-issue]:https://github.com/turtleDev/web-scraping-101/issues
+[ref-issue]:/issues
