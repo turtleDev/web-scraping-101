@@ -19,8 +19,10 @@ Things that could use a hand are:
 * references to external resources.
 
 # Questions?
-If you'd like to ask a question, open up an issue. I'll try to get back to you as soon as I can.
+If you'd like to ask a question, open up an [issue][ref-issue]. I'll try to get back to you as soon as I can.
 
 
 # License
 MIT
+
+[ref-issue]:https://github.com/turtleDev/web-scraping-101/issues
