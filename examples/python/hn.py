@@ -53,7 +53,7 @@ class Crawler:
                     request.reason,
                     request.url
                 )
-                print(errstr, sys.stderr)
+                print(errstr, file=sys.stderr)
         else:
             print('Crawler has finished running')
 
