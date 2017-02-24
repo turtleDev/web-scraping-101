@@ -15,7 +15,7 @@ end
 
 ## Usage
 ```shell
-$ mix deps.get`
+$ mix deps.get
 $ mix run
 ```
 
